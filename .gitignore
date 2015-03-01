@@ -12,3 +12,4 @@ xmloutput*
 npm-debug.log
 
 *.swp
+.idea
