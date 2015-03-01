@@ -14,6 +14,9 @@ angular.module('protractorApp').config(function($routeProvider) {
       when('/browser-setup', {
         templateUrl: 'partials/browser-setup.html'
       }).
+      when('/browser-support', {
+        templateUrl: 'partials/browser-support.html'
+      }).
       when('/control-flow', {
         templateUrl: 'partials/control-flow.html'
       }).
@@ -55,6 +58,12 @@ angular.module('protractorApp').config(function($routeProvider) {
       }).
       when('/tutorial', {
         templateUrl: 'partials/tutorial.html'
+      }).
+      when('/jasmine-upgrade', {
+        templateUrl: 'partials/jasmine-upgrade.html'
+      }).
+      when('/mobile-setup', {
+        templateUrl: 'partials/mobile-setup.html'
       }).
       otherwise({
         redirectTo: '/'

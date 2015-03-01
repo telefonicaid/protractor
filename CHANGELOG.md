@@ -1,3 +1,248 @@
+# 1.7.0
+
+## Dependency Version Upgrades
+
+- ([2658865](https://github.com/angular/protractor/commit/2658865640d82617e69208cdb2263a2073a20156)) 
+  feat(webdriver): bump chromedriver to 2.14
+
+  Chromedriver 2.14 contains support for accessing elements inside the shadow DOM.
+
+## Features
+
+- ([d220ecf](https://github.com/angular/protractor/commit/d220ecf5ebc7ba023eab728d4a684e978ff77c83)) 
+  feat(locators): add by.deepCss selector for finding elements in the shadow dom
+
+  Usage:
+
+  ```
+  element(by.deepCss('.foo'))
+  equivalent to 'element(by.css('* /deep/ .foo'))
+  ```
+
+- ([324f69d](https://github.com/angular/protractor/commit/324f69d6aa7c23ad77f1d50e26e0a56bade40132)) 
+  feat(locators): add by.exactRepeater
+
+- ([eb9d567](https://github.com/angular/protractor/commit/eb9d56755fa93401502e7608c7c3d0f16927c082)) 
+  feat(frameworks): add support for custom frameworks
+
+  Usage:
+
+  ```js
+  exports.config = {
+    framework: 'custom',
+    frameworkPath: '/path/to/your/framework/index.js'
+  }
+  ```
+
+- ([9bc1c53](https://github.com/angular/protractor/commit/9bc1c53e40161521b0c125a810f86235c974f100)) 
+  feat(expectedConditions): add helper library for syncing with non-angular apps
+
+  Usage:
+
+  ```javascript
+  var EC = protractor.ExpectedConditions;
+  var button = $('#xyz');
+  var isClickable = EC.elementToBeClickable(button);
+
+  browser.get(URL); browser.wait(isClickable, 5000); //wait for an element to become clickable 
+  button.click();
+  ```
+
+  You can also customize the conditions:
+
+  ```javascript
+  var urlChanged = function() {
+    return browser.getCurrentUrl().then(function(url) {
+      return url != 'http://www.angularjs.org';
+    });
+  };
+
+  // condition to wait for url to change, title to contain 'foo', and $('abc') element to contain text 'bar'
+  var condition = EC.and(urlChanged, EC.titleContains('foo'),
+      EC.textToBePresentInElement($('abc'), 'bar'));
+  $('navButton').click(); browser.wait(condition, 5000); //wait for condition to be true.
+  // do other things
+  ```
+
+- ([fb099de](https://github.com/angular/protractor/commit/fb099dedf92a64732d88401dd1b0d4d30b22650d)) 
+  feat(elementExplorer): Combine browser.pause with elementExplorer
+
+   * reuse logic for browser.pause for elementExplorer
+   * introduce browser.enterRepl
+   * allow customization of driver for elementExplorer
+   * fix bug where repl cannot return an ElementFinder (related #1600)
+
+    Closes #1314, #1315
+
+- ([9def5e0](https://github.com/angular/protractor/commit/9def5e0e67e031949010fed4ed47178a534c99e8)) 
+  feat(runner): add browser.getProcessedConfig method
+
+  Now, instances of the `browser` object have a `getProcessedConfig` method which returns a promise
+  that resolves to the current Protractor configuration object for the current runner instance. This
+  means that if multiCapabilities are being used or tests are sharded, `getProcessedConfig` will
+  return an object with the `capabilities` and `specs` property specific to the current instance.
+
+  Closes #1724
+
+## Bug Fixes
+
+- ([ccb165d](https://github.com/angular/protractor/commit/ccb165d99b69e1ae66e4c1badd2f4e04f1481e75)) 
+  fix(webdriver-manager): unzipping chromedriver should override old version
+
+  See #1813
+
+# 1.6.1
+
+## Bug Fixes
+
+- ([92c5d17](https://github.com/angular/protractor/commit/92c5d17844a2b4dc56c483ab4a65e2bf631175f9)) 
+  fix(element): test crashes when using certain locators with `fromWebElement_`
+
+  Protractor crashes when one uses locators with findElementsOverride (i.e. any custom protractor
+  locator like by.binding/repeater/etc) in map/filter/then/each/reduce
+
+# 1.6.0
+
+## Features
+
+- ([1e60a95](https://github.com/angular/protractor/commit/1e60a9504c883a95f3500eafa38e1fc11dc28c9b)) 
+  feat(frameworks): add jasmine2 framework
+
+  Jasmine2.x may now be used by setting `framework: jasmine2` in your config.
+  See https://github.com/angular/protractor/blob/master/docs/jasmine-upgrade.md
+
+- ([0b93003](https://github.com/angular/protractor/commit/0b930035905d1868225667de358222e51394f3ac)) 
+  feat(jasmine2): add 'grep' option to jasmine2
+
+  Allow users to filter the specs that they want to run using simple string match. To use this
+  feature, either: 1) specify jasmineNodeOpts.grep in your conf.js file
+   or 2) via commandline like "protractor conf.js --grep='pattern to match'"
+
+- ([4368842](https://github.com/angular/protractor/commit/4368842da73d4ed501df21b61daf71951e59524b)) 
+  feat(wddebugger): enable repl (with autocomplete) for browser.pause
+
+  See https://github.com/angular/protractor/blob/master/docs/debugging.md for
+  usage.
+
+- ([9c9ed31](https://github.com/angular/protractor/commit/9c9ed31591f5a3c552222ad7feb1ecd650973902)) 
+  feat(launcher): allow multicapabilities to take array of promises
+
+  Enables adding `getMultiCapabilities: function(){}` to your configuration file. The function
+  returns either multiCapabilities or a promise of a multiCapabilities that is resolved after
+  `afterLaunch` and before driver set up. If this is specified, both capabilities and
+  multiCapabilities will be ignored.
+
+  Also allows specifying `seleniumAddress` in the capabilities/multiCapabilities object, which will
+  override the global `seleniumAddress`. This allows you to use a different `seleniumAddress` per
+  capabilities.
+
+  Breaking Changes:
+  `capabilities` can no longer be a promise. Use getMultiCapabilities if you need to return a
+  promise.
+  `seleniumAddress` can no longer be a promise. Likewise, use getMultiCapabilities.
+
+- ([1670384](https://github.com/angular/protractor/commit/167038499aacfd5def03472f9f548529b273e1e0)) 
+  feat(runner): allow protractor to restart browser between tests
+
+  Enables adding `restartBrowserBetweenTests: true` to your configuration file. Note that this will
+  slow down test suites considerably. Closes #1435
+
+- ([56beb24](https://github.com/angular/protractor/commit/56beb24b9473ceedc491f3ca00fbce1bb9a18f29)) 
+  feat(protractor): add browser.getRegisteredMockModules()
+
+  Now `browser.getRegisteredMockModules()` returns a list of the functions or strings that have
+  been registered as mock modules. For troubleshooting.
+
+  Closes #1434.
+
+- ([5a404c2](https://github.com/angular/protractor/commit/5a404c27326fdb130e5d4ac5c4704b4013c78853)) 
+  feat(timeline): add timeline plugin
+
+  This plugin gathers test timeline information from the protractor test process, the selenium
+  client logs (if available), and sauce labs (if available), and presents the output visually. This
+  improves understanding of where latency issues are in tests. See #674
+
+  Usage:
+
+  Add the plugin to your configuration file:
+
+  ```js
+  exports.config = {
+   plugins: [{
+     path: 'node_modules/protractor/plugins/timeline/index.js',
+
+      // Output json and html will go in this folder.
+     outdir: 'timelines',
+
+      // Optional - if sauceUser and sauceKey are specified, logs from
+     // SauceLabs will also be parsed after test invocation.
+       sauceUser: 'Jane',
+       sauceKey: 'abcdefg'
+     }],
+   // other configuration settings
+  };
+  ```
+
+- ([a9d83f7](https://github.com/angular/protractor/commit/a9d83f7ebbce1be7f7f8c2986d1bfebccff1d6f3)) 
+  feat(plugins): add postResults hook for plugins
+
+  Allows plugins to include a postResults function, which will be called after webdriver has been
+  quit and the environment has been torn down. This step may not modify the contents of the test
+  results object.
+
+## Dependency Version Upgrades
+
+- ([2b4ac07](https://github.com/angular/protractor/commit/2b4ac07eaccafec2ad88c05747a75268a3529759)) 
+  feat(webdriver): version bumps for chromedriver and supported browsers
+
+  Chromedriver to 2.13. CI browser version bumps for Chrome 39 and Firefox 34.
+
+
+## Bug Fixes
+
+- ([adf30ba](https://github.com/angular/protractor/commit/adf30ba701d2a1ec992912001723de19366bea57)) 
+  fix(test): use a platform agnostic way to run minijasminenode
+
+- ([50ee0b4](https://github.com/angular/protractor/commit/50ee0b4d1a1b93cedf3d099d349b937b25ee9e79)) 
+  fix(test): allow to run 'npm start' or 'npm test' from windows too
+
+- ([b28355d](https://github.com/angular/protractor/commit/b28355dabde4c507ac620b973104e98e96279f2a)) 
+  fix(cucumber): emit on cucumber scenario instead of step
+
+- ([33dcd77](https://github.com/angular/protractor/commit/33dcd777fe34c6682b64bda0adc4f3595b03394b)) 
+  fix(util): webdriver could deadlock
+
+  when prepare scripts containing promises are wrapped in a flow.execute
+
+- ([a877268](https://github.com/angular/protractor/commit/a877268f35cb0df8f34f60b71ad7201fef58d189)) 
+  fix(locators): ng-repeat-start should not return extra null element
+
+- ([d505249](https://github.com/angular/protractor/commit/d505249fff773d0eaee8b17435ab751be8fbefa6)) 
+  fix(waitforangular): improve error messages when waitForAngular fails
+
+  Previously, caught errors were being interpreted as an empty object, causing lots of errors such
+  as
+  'Uncaught exception: Error while waiting for Protractor to sync with the page: {}' Now the error
+  message will be displayed, and a more useful custom message will be thrown if the variable
+  'angular' is not present or the root element is not part of the ng-app.
+
+  See #1474
+
+## Breaking Changes
+
+- Due to ([9c9ed31](https://github.com/angular/protractor/commit/9c9ed31591f5a3c552222ad7feb1ecd650973902)) 
+  feat(launcher): allow multicapabilities to take array of promises
+
+  Breaking Changes:
+  `capabilities` can no longer be a promise. Use getMultiCapabilities if you need to return a
+  promise.
+  `seleniumAddress` can no longer be a promise. Likewise, use getMultiCapabilities.
+
+  Why is this breaking change not causing a major version bump? This feature was
+  not fully supported previously and we worked with all known users when making
+  the change.
+
+
 # 1.5.0
 
 ## Features
@@ -58,6 +303,29 @@
   reportSpecResults.
 
   Closes #1602
+
+## Breaking Changes
+
+- ([0bbfd2b](https://github.com/angular/protractor/commit/0bbfd2b6d38392938781d846ad37b5a0fd964004)) 
+  feat(protractor/runner): allow multiple browser in test
+
+  `protractor.getInstance()` had been unused (replaced by global `browser` in v0.12.0)
+  and is now removed.
+
+  Before:
+  ```js
+  var myBrowser2 = protractor.getInstance();
+  ```
+
+  After:
+  ```js
+  // In normal tests, just use the exported global browser
+  var myBrowser2 = browser;
+  ```
+
+  If you are creating your own instance of the Protractor class, you may still
+  use `protractor.wrapDriver` as before.
+
 
 # 1.4.0
 
@@ -653,7 +921,7 @@ _Note: Major version 0 releases are for initial development, and backwards incom
 - ([3c0e727](https://github.com/angular/protractor/commit/3c0e727136ab3d397c1a9a2bb02692d0aeb9be40)) 
   refactor(protractor): reorganize internal structure of elementFinder/webelement
 
-  - Allow chaining of actions (i.e. `element(By.x).clear().sendKeys('abc)`)
+  - Allow chaining of actions (i.e. `element(By.x).clear().sendKeys('abc')`)
   - first(), last(), and get(index) are not executed immediately, allowing
       them to be placed in page objects
   - Rework the way that elementFinder and wrappedWebElement is represented
@@ -1084,7 +1352,7 @@ _Note: Major version 0 releases are for initial development, and backwards incom
       window.clientSideScripts.findInputs('username');
 
     Also, any custom locators using addLocator will now break since the
-    arguments order has chnaged. To migrate the code follow the example below:
+    arguments order has changed. To migrate the code follow the example below:
 
       Before:
 
@@ -1520,7 +1788,7 @@ _Note: Major version 0 releases are for initial development, and backwards incom
 
 _Note: Major version 0 releases are for initial development, and backwards incompatible changes may be introduced at any time._
 
-This change introduces major syntax updates. Using the new syntax is recommeded, but the old version is still supported for now. Note also that the test application, docs, and example tests have been updated.
+This change introduces major syntax updates. Using the new syntax is recommended, but the old version is still supported for now. Note also that the test application, docs, and example tests have been updated.
 
 ## Features
 
@@ -1641,7 +1909,7 @@ Adds better messages in the selenium server install script, and also
 makes the script output a 'start' executable which can be used to quickly
 start up the selenium standalone. *not yet windows friendly*. Closes #108.
 
-- ([b32f5a5](https://github.com/angular/protractor/commit/b32f5a59169f1324271bd5abc09c17fcd9c4f249)) feat(config): add exmples for dealing with log-in
+- ([b32f5a5](https://github.com/angular/protractor/commit/b32f5a59169f1324271bd5abc09c17fcd9c4f249)) feat(config): add examples for dealing with log-in
 
 Adds examples for how to log in when the login page is not written
 in Angular. New examples are in spec/login.

@@ -16,7 +16,7 @@ describe('mock modules', function() {
 
   // A third module overriding the 'version' service. This function
   // references the additional arguments provided through addMockModule().
-  var mockModuleC = function () {
+  var mockModuleC = function() {
     var newModule = angular.module('moduleC', []);
     newModule.value('version', arguments[0] + arguments[1]);
   };
@@ -83,6 +83,16 @@ describe('mock modules', function() {
     browser.get('index.html');
 
     expect(element(by.css('[app-version]')).getText()).toEqual('42beta');
+  });
+
+  it('should retrieve a list of current mock modules', function() {
+    browser.addMockModule('moduleA', mockModuleA);
+    browser.addMockModule('moduleC', mockModuleC, '2', 'B');
+
+    // Should have 3 mock modules, A, C, and the base.
+    expect(browser.getRegisteredMockModules().length).toBe(3);
+    expect(browser.getRegisteredMockModules()[1]).toEqual(mockModuleA);
+    expect(browser.getRegisteredMockModules()[2]).toEqual(mockModuleC);
   });
 
   it('should load mock modules after refresh', function() {

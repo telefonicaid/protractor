@@ -16,7 +16,7 @@ var typeTable;
 /**
  * The hash used to generate the links to the source code.
  */
-var linksHash = 'master';
+var linksHash = require('../../../package.json').version;
 
 /**
  * Add a link to the source code.
@@ -43,7 +43,7 @@ var addLinkToSourceCode = function(doc) {
  */
 var addLinkToLinkAnnotation = function(str, doc) {
   var oldStr = null;
-  while(str != oldStr) {
+  while (str != oldStr) {
     oldStr = str;
     var matches = /{\s*@link\s+([^]+?)\s*}/.exec(str);
     if (matches) {
@@ -87,25 +87,26 @@ var toMarkdownLinkFormat = function(link, doc) {
     type = link.substr(0, i).trim();
   }
 
-  // Remove extra '()' at the end of types
-  if (type.substr(-2) == '()') {
-    type = type.substr(0, type.length - 2);
-  }
+  if (!type.match(/^https?:\/\//)) {
+    // Remove extra '()' at the end of types
+    if (type.substr(-2) == '()') {
+      type = type.substr(0, type.length - 2);
+    }
 
-  // Expand '#' at the start of types
-  if (type[0] == '#') {
-    type = doc.name.substr(0, doc.name.lastIndexOf('.')+1) + type.substr(1);
-  }
+    // Expand '#' at the start of types
+    if (type[0] == '#') {
+      type = doc.name.substr(0, doc.name.lastIndexOf('.') + 1) + type.substr(1);
+    }
 
-  // Replace '#' in the middle of types with '.'
-  type = type.replace(new RegExp('#', 'g'), '.');
+    // Replace '#' in the middle of types with '.'
+    type = type.replace(new RegExp('#', 'g'), '.');
 
-  // Only create a link if it's in the API
-  if (typeTable[type]) {
-    return '['+desc+']('+type+')';
-  } else {
-    return desc;
+    // Only create a link if it's in the API
+    if (!typeTable[type]) {
+      return desc;
+    }
   }
+  return '[' + desc + '](' + type + ')';
 };
 
 /**
@@ -155,17 +156,11 @@ module.exports = function addLinks() {
       docs.forEach(function(doc) {
         addLinkToSourceCode(doc);
         doc.description = addLinkToLinkAnnotation(doc.description, doc);
-        //Remove @link annotations we don't process
-        if (doc.params) {
-          for(var i = 0; i < doc.params.length; i++) {
-            doc.params[i].description = doc.params[i].description.replace(
-                /{\s*@link\s+([^]+?)\s*}/, '$1');
-          }
-        }
 
-        // Add links for the param types.
+        // Add links for the params.
         _.each(doc.params, function(param) {
           param.paramString = getTypeString(param);
+          param.description = addLinkToLinkAnnotation(param.description, doc);
         });
 
         // Add links for the return types.
@@ -178,5 +173,5 @@ module.exports = function addLinks() {
         }
       });
     }
-  }
+  };
 };

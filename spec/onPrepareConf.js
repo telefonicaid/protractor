@@ -6,6 +6,8 @@ var env = require('./environment.js');
 exports.config = {
   seleniumAddress: env.seleniumAddress,
 
+  framework: 'jasmine2',
+
   specs: [
     'onPrepare/*_spec.js'
   ],
@@ -13,7 +15,7 @@ exports.config = {
   capabilities: env.capabilities,
 
   baseUrl: env.baseUrl,
-  
+
   onPrepare: function() {
     browser.params.password = '12345';
   }

@@ -74,7 +74,9 @@
       // Does it come with a type? Types come escaped as [description](theType).
       var match;
       while (match = html.match(/(\[(.*?)\]\((.*?)\))/)) {
-        var link = '<a href="#/api?view=' + match[3] + '">' + match[2] + '</a>';
+        var link = '<a href="' +
+            (match[3].match(/^https?:\/\//) ? '' : '#/api?view=') + match[3] +
+            '">' + match[2] + '</a>';
         html = html.replace(match[1], link);
       }
 
@@ -108,7 +110,7 @@
           if (view === item.name) {
             self.$scope.showElement(item);
           }
-        })
+        });
       }
 
       self.addExtends(list);
@@ -121,7 +123,7 @@
    */
   ApiCtrl.prototype.setViewProperties = function(list) {
     var itemsByName = {};
-    
+
     var getTitle = function(item) {
       if (item.alias) {
         return item.alias;

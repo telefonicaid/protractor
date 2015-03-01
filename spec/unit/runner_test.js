@@ -4,7 +4,7 @@ var q = require('q');
 describe('the Protractor runner', function() {
   it('should export its config', function() {
     var config = {
-      foo: 'bar',
+      foo: 'bar'
     };
 
     var runner = new Runner(config);
@@ -30,29 +30,6 @@ describe('the Protractor runner', function() {
     });
   });
 
-  it('should wait for promise capabilities to resolve', function(done) {
-    var config = {
-      mockSelenium: true,
-      specs: ['*.js'],
-      framework: 'debugprint',
-      capabilities: q.when({
-        'browserName': 'customfortest'
-      })
-    };
-    var exitCode;
-    Runner.prototype.exit_ = function(exit) {
-      exitCode = exit;
-    };
-    var runner = new Runner(config);
-
-    runner.run().then(function() {
-      expect(runner.getConfig().capabilities.browserName).
-          toEqual('customfortest');
-      expect(exitCode).toEqual(0);
-      done();
-    });
-  });
-
   it('should fail with no specs', function() {
     var config = {
       mockSelenium: true,
@@ -68,5 +45,18 @@ describe('the Protractor runner', function() {
     expect(function() {
       runner.run();
     }).toThrow();
+  });
+
+  it('should fail when no custom framework is defined', function(done) {
+    var config = {
+      mockSelenium: true,
+      specs: ['*.js'],
+      framework: 'custom'
+    };
+
+    var runner = new Runner(config);
+    runner.run().then(function() {
+      done.fail('expected error when no custom framework is defined');
+    }, done);
   });
 });

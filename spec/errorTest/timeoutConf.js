@@ -3,6 +3,8 @@ var env = require('../environment.js');
 exports.config = {
   seleniumAddress: env.seleniumAddress,
 
+  framework: 'jasmine2',
+
   specs: [
     'baseCase/timeout_spec.js'
   ],
@@ -17,6 +19,6 @@ exports.config = {
     isVerbose: true,
     showTiming: true,
     defaultTimeoutInterval: 90000
-  },
+  }
 
 };

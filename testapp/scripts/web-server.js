@@ -4,15 +4,16 @@ var express = require('express');
 var optimist = require('optimist');
 var util = require('util');
 var path = require('path');
+var env = require('../../spec/environment.js');
 
 var testApp = express();
-var DEFAULT_PORT = process.env.HTTP_PORT || 8081;
+var DEFAULT_PORT = process.env.HTTP_PORT || env.webServerDefaultPort;
 var testAppDir = path.resolve(__dirname, '..');
 
 var argv = optimist.describe('port', 'port').
     default('port', DEFAULT_PORT).
     describe('ngversion', 'version of AngularJS to use').
-    default('ngversion', '1.3.0-rc0').
+    default('ngversion', '1.3.13').
     argv;
 
 var angularDir = path.join(testAppDir, 'lib/angular_v' + argv.ngversion);

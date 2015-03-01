@@ -7,9 +7,11 @@ describe('Navigation', function() {
   });
 
   it('should go to home', function() {
+    menu.dropdown('Home').open();
+
     expect($('.protractor-logo').isPresent()).toBe(true);
   });
-  
+
   it('should go to tutorial', function() {
     menu.dropdown('Quick Start').item('Tutorial');
 
@@ -19,7 +21,7 @@ describe('Navigation', function() {
   describe('Menu items', function() {
     it('should have menu items', function() {
       // Make sure all the top level menu labels are present.
-      expect(menu.getTopMenuItems()).toEqual([
+      expect(menu.topMenuItems.getText()).toEqual([
         'Home',
         'Quick Start',
         'Protractor Setup',
@@ -55,13 +57,16 @@ describe('Navigation', function() {
       ]);
     });
 
-    it('should have itmes under Reference', function() {
+    it('should have items under Reference', function() {
       expect(menu.dropdown('Reference').itemNames()).toEqual([
         'Configuration File Reference',
         'Protractor API',
+        'Browser Support',
         'Timeouts',
         'The WebDriver Control Flow',
         'How It Works',
+        'Upgrading to Jasmine 2.0',
+        'Mobile Setup',
         'FAQ'
       ]);
     });
@@ -150,6 +155,12 @@ describe('Navigation', function() {
       expect($('h1').getText()).toBe('Timeouts');
     });
 
+    it('should go to Browser Support', function() {
+      menu.dropdown('Reference').item('Browser Support');
+
+      expect($('h1').getText()).toBe('Browser Support');
+    });
+
     it('should go to The WebDriver Control Flow', function() {
       menu.dropdown('Reference').item('The WebDriver Control Flow');
 
@@ -160,6 +171,18 @@ describe('Navigation', function() {
       menu.dropdown('Reference').item('How It Works');
 
       expect($('h1').getText()).toBe('How It Works');
+    });
+
+    it('should go to Upgrading to Jasmine 2.0', function() {
+      menu.dropdown('Reference').item('Upgrading to Jasmine 2.0');
+
+      expect($('h1').getText()).toBe('Upgrading from Jasmine 1.3 to 2.x');
+    });
+
+    it('should go to Mobile Setup', function() {
+      menu.dropdown('Reference').item('Mobile Setup');
+
+      expect($('h1').getText()).toBe('Mobile Setup');
     });
 
     it('should go to FAQ', function() {
