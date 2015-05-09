@@ -19,15 +19,21 @@ var passingTests = [
   'node lib/cli.js spec/suitesConf.js --suite okmany',
   'node lib/cli.js spec/suitesConf.js --suite okspec',
   'node lib/cli.js spec/suitesConf.js --suite okmany,okspec',
-  'node lib/cli.js spec/pluginsBasicConf.js',
-  'node lib/cli.js spec/pluginsFullConf.js',
+  'node lib/cli.js spec/plugins/smokeConf.js',
+  'node lib/cli.js spec/plugins/multiPluginConf.js',
+  'node lib/cli.js spec/plugins/jasmine1PostTestConf.js',
+  'node lib/cli.js spec/plugins/jasmine2PostTestConf.js',
+  'node lib/cli.js spec/plugins/mochaPostTestConf.js',
+  'node lib/cli.js spec/plugins/cucumberPostTestConf.js',
   'node lib/cli.js spec/interactionConf.js',
   'node lib/cli.js spec/directConnectConf.js',
   'node lib/cli.js spec/restartBrowserBetweenTestsConf.js',
   'node lib/cli.js spec/getCapabilitiesConf.js',
   'node lib/cli.js spec/controlLockConf.js',
   'node lib/cli.js spec/customFramework.js',
-  'node node_modules/.bin/jasmine JASMINE_CONFIG_PATH=scripts/unit_test.json'
+  'node node_modules/.bin/jasmine JASMINE_CONFIG_PATH=scripts/unit_test.json',
+  'node scripts/interactive_tests/interactive_test.js',
+  'node scripts/interactive_tests/with_base_url.js'
 ];
 
 // Plugins
@@ -36,7 +42,9 @@ passingTests.push('node node_modules/minijasminenode/bin/minijn ' +
 passingTests.push(
     'node lib/cli.js plugins/timeline/spec/conf.js',
     'node lib/cli.js plugins/ngHint/spec/successConfig.js',
-    'node lib/cli.js plugins/accessibility/spec/successConfig.js');
+    'node lib/cli.js plugins/accessibility/spec/successConfig.js',
+    'node lib/cli.js plugins/console/spec/consolePassConfig.js'
+);
 
 var executor = new Executor();
 
@@ -134,5 +142,40 @@ executor.addCommandlineTest(
     {
       message: '1 element failed:'
     }]);
+
+// Check console plugin
+
+executor.addCommandlineTest(
+  'node lib/cli.js plugins/console/spec/consoleFailConfig.js')
+  .expectExitCode(1)
+  .expectErrors([
+    {message: 'This is a test warning'},
+    {message: 'This is a test error'},
+    {message: 'This should be filtered out by string'},
+    {message: 'This should be filtered out by regex'}
+  ]);
+
+executor.addCommandlineTest(
+  'node lib/cli.js plugins/console/spec/consoleFailErrorConfig.js')
+  .expectExitCode(1)
+  .expectErrors([
+    {message: 'This is a test error'},
+    {message: 'This should be filtered out by string'},
+    {message: 'This should be filtered out by regex'}
+  ]);
+
+executor.addCommandlineTest(
+  'node lib/cli.js plugins/console/spec/consoleFailWarningConfig.js')
+  .expectExitCode(1)
+  .expectErrors([
+    {message: 'This is a test warning'}
+  ]);
+
+executor.addCommandlineTest(
+  'node lib/cli.js plugins/console/spec/consoleFailFilterConfig.js')
+  .expectExitCode(1)
+  .expectErrors([
+    {message: 'This is a test error'}
+  ]);
 
 executor.execute();

@@ -13,7 +13,9 @@ var q = require('q'),
  *    exports.config = {
  *      ...
  *      plugins: [{
- *        chromeA11YDevTools: true,
+ *        chromeA11YDevTools: {
+ *          treatWarningsAsFailures: true
+ *        },
  *        path: 'node_modules/protractor.plugins/accessiblity'
  *      }]
  *    }
@@ -104,11 +106,23 @@ function runTenonIO(config) {
   });
 
   function processTenonResults(response) {
+
+    var testHeader = 'Tenon.io - ';
+
+    if (!response.resultSet) {
+      if (response.code === 'daily_limit_reached') {
+        console.log(testHeader, 'Daily limit reached');
+        console.log(response.moreInfo);
+      }
+      else {
+        console.log('Tenon.io error');
+      }
+      return;
+    }
+
     var numResults = response.resultSet.length;
 
     testOut.failedCount = numResults;
-
-    var testHeader = 'Tenon.io - ';
 
     if (numResults === 0) {
       return testOut.specResults.push({
@@ -127,9 +141,10 @@ function runTenonIO(config) {
     }
 
     return response.resultSet.forEach(function(result) {
+      var ref = (result.ref === null) ? '' : result.ref;
       var errorMsg = result.errorDescription + '\n\n' +
                      '\t\t' +entities.decode(result.errorSnippet) +
-                     '\n\n\t\t' +result.ref + '\n';
+                     '\n\n\t\t' + ref + '\n';
 
 
       testOut.specResults.push({
@@ -152,13 +167,22 @@ function runTenonIO(config) {
  *    failed tests
  * @private
  */
-function runChromeDevTools() {
+function runChromeDevTools(config) {
 
   var data = fs.readFileSync(AUDIT_FILE, 'utf-8');
   data = data + ' return axs.Audit.run();';
 
   var elementPromises = [],
       elementStringLength = 200;
+
+  function trimText(text) {
+    if (text.length > elementStringLength) {
+      return text.substring(0, elementStringLength / 2) + ' ... '
+          + text.substring(text.length - elementStringLength / 2);
+    } else {
+      return text;
+    }
+  }
 
   var testHeader = 'Chrome A11Y - ';
 
@@ -174,7 +198,7 @@ function runChromeDevTools() {
             elem.getOuterHtml().then(function(text) {
               return {
                 code: result.rule.code,
-                list: text.substring(0, elementStringLength)
+                list: trimText(text)
               };
             })
           );
@@ -189,10 +213,17 @@ function runChromeDevTools() {
 
       return audit.forEach(function(result, index) {
         if (result.result === 'FAIL') {
-          result.passed = false;
-          testOut.failedCount++;
-
           var label = result.elementCount === 1 ? ' element ' : ' elements ';
+          if (result.rule.severity !== 'Warning'
+              || config.chromeA11YDevTools.treatWarningsAsFailures) {
+            result.passed = false;
+            testOut.failedCount++;
+          } else {
+            result.passed = true;
+            result.rule.heading = '\x1b[33m(WARNING) '
+                + result.rule.heading + ' (' + result.elementCount
+                + label + 'failed)';
+          }
           result.output = '\n\t\t' + result.elementCount + label + 'failed:';
 
           // match elements returned via promises

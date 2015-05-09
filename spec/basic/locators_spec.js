@@ -11,7 +11,7 @@ describe('locators', function() {
     });
 
     it('should allow custom expectations to expect an element', function() {
-      this.addMatchers({
+      jasmine.addMatchers({
         toHaveText: function() {
           return {
             compare: function(actual, expected) {
@@ -387,5 +387,11 @@ describe('locators', function() {
   it('should determine if an element is present', function() {
     expect(browser.isElementPresent(by.binding('greet'))).toBe(true);
     expect(browser.isElementPresent(by.binding('nopenopenope'))).toBe(false);
+  });
+
+  it('should determine if an ElementFinder is present', function() {
+    expect(browser.isElementPresent(element(by.binding('greet')))).toBe(true);
+    expect(browser.isElementPresent(element(by.binding('nopenopenope'))))
+        .toBe(false);
   });
 });

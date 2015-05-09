@@ -1,3 +1,195 @@
+# 2.0.0
+
+_Why is this change version 2.0? Protractor is following semver, and there's some breaking changes here._
+
+## Dependency Version Upgrades
+
+- ([34f0eeb](https://github.com/angular/protractor/commit/34f0eebd7e73b10e9b990caa06b63b6fd22b2589)) 
+  fix(element): update to selenium-webdriver@2.45.1 and remove element.then
+
+  This change updates the version of WebDriverJS (selenium-webdriver node module) from 2.44 to
+  2.45.1. See the full changelog at 
+  https://github.com/SeleniumHQ/selenium/blob/master/javascript/node/selenium-webdriver/CHANGES.md
+
+- ([8976e75](https://github.com/angular/protractor/commit/8976e75dc1817817e6bd2dbb0b6cbc78d72035e9)) 
+  chore(jasmine): bump version of jasminewd2
+
+## Features
+
+- ([997937d](https://github.com/angular/protractor/commit/997937d189fb3a9fb51f1b2e4756981c8958ceba)) 
+  feat(console plugin): Added new console plugin
+
+- ([ef6a09d](https://github.com/angular/protractor/commit/ef6a09d798fd04124224f6ca48eb64d13eb01eff)) 
+  feat(webdriver-manager): allow a custom cdn for binaries
+
+  Added a cdn value for each binary to be overrided by the cli argument
+  `alternate_cdn`.
+
+## Bug Fixes
+
+- ([fb92be6](https://github.com/angular/protractor/commit/fb92be6d588e7302989bd171a064739359bb3c74)) 
+  fix(accessibility): improve output for long elements
+
+  Instead of just printing the first N characters of the element's template, print the first and
+  last N/2.
+
+  See #1854
+
+- ([2a765c7](https://github.com/angular/protractor/commit/2a765c76e121de13ff86a279fe3f21cb15c17783)) 
+  fix(element): return not present when an element disappears
+
+- ([8a3412e](https://github.com/angular/protractor/commit/8a3412e98614bb69978869b34b5b7243619f015d)) 
+  fix(bug): by.buttonText() should not be effected by CSS style
+
+  Closes issue #1904
+
+- ([5d23280](https://github.com/angular/protractor/commit/5d232807f1e32a9a3ba5a5e4f07ace5d535fc3cd)) 
+  fix(debugger): fix issue where output does not display circular dep and functions
+
+- ([ef0fbc0](https://github.com/angular/protractor/commit/ef0fbc096035bb01d136897ca463892ceca56b73)) 
+  fix(debugger): expose require into debugger
+
+## Breaking Changes
+
+- ([34f0eeb](https://github.com/angular/protractor/commit/34f0eebd7e73b10e9b990caa06b63b6fd22b2589)) 
+  fix(element): update to selenium-webdriver@2.45.1 and remove element.then
+
+  This change updates the version of WebDriverJS (selenium-webdriver node module) from 2.44 to
+  2.45.1. See the full changelog at 
+  https://github.com/SeleniumHQ/selenium/blob/master/javascript/node/selenium-webdriver/CHANGES.md
+
+  To enable the update and remove confusion, this removes the `element().then` function unless there
+  is an action result. This function is completely unnecessary, because it would always resolve to
+  itself, but the removal may cause breaking changes.
+
+  Before:
+  ```js
+  element(by.css('foo')).then(function(el) {
+    return el.getText().then(...);
+  });
+  ```
+
+  After:
+  ```js
+  element(by.css('foo')).getText().then(...);
+  ```
+
+  In other words, an ElementFinder is now no longer a promise until an action has been called.
+
+  Before:
+  ```js
+  var el = element(by.css('foo'));
+
+  protractor.promise.isPromise(el); // true
+  protractor.promise.isPromise(el.click()); // true
+  ```
+
+  After:
+  ```js
+  var el = element(by.css('foo'));
+
+  protractor.promise.isPromise(el); // false
+  protractor.promise.isPromise(el.click()); // true
+  ```
+
+  Also, fixes `filter` and `map` to work with the new WebDriverJS.
+
+- ([3c04858](https://github.com/angular/protractor/commit/3c048585ac811726d6c6d493ed6d43f6a3570bee)) 
+  chore(config): remove deprecated `chromeOnly`
+
+  This has been replaced with `directConnect`.
+
+- Due to ([1159612](https://github.com/angular/protractor/commit/1159612ed76bb65612dbb2cc648e45928a251b10))
+
+  Due to changes in how scheduling works on the control flow, specs
+  in Jasmine1 will no longer wait for multiple commands scheduled in `onPrepare`
+  or in the global space of the test file.
+
+  Before:
+  ```js
+  onPrepare: function() {
+    browser.driver.manage().window().maximize();
+
+    // This second command will not finish before the specs start.
+    browser.get('http://juliemr.github.io/protractor-demo');
+  }
+  ```
+
+  To fix, return the last promise from onPrepare:
+
+  After:
+  ```js
+  onPrepare: function() {
+    browser.driver.manage().window().maximize();
+    return browser.get('http://juliemr.github.io/protractor-demo');
+  }
+  ```
+
+- Due to ([1159612](https://github.com/angular/protractor/commit/1159612ed76bb65612dbb2cc648e45928a251b10))
+
+  Due to changes in WebDriverJS, `wait` without a timeout will now default
+  to waiting for 0 ms instead of waiting indefinitely.
+
+  Before:
+  ```js
+  browser.wait(fn); // would wait indefinitely
+  ```
+
+  After
+  ```js
+  browser.wait(fn, 8000) // to fix, add an explicit timeout
+  ```
+
+  This will be reverted in the [next version of WebDriverJS](https://github.com/SeleniumHQ/selenium/blob/master/javascript/node/selenium-webdriver/CHANGES.md#v2460-dev).
+
+
+# 1.8.0
+
+## Dependency Version Upgrades
+
+- ([1159612](https://github.com/angular/protractor/commit/1159612ed76bb65612dbb2cc648e45928a251b10)) 
+  fix(webdriver): bump selenium to 2.45.0
+
+  Bump the selenium standalone binary to 2.45.0.
+
+  See https://code.google.com/p/selenium/source/browse/java/CHANGELOG for a full list of changes to
+  the selenium server.
+
+  Closes #1734
+
+## Features
+
+- ([54163dc](https://github.com/angular/protractor/commit/54163dcd22cee27cf16685fbb4d53a2712233d26)) 
+  feat(a11yPlugin): plugin for integrating with Chrome Accessibility Developer Tools
+
+  Also includes missing Angular map files. See plugins/accessibility/index.js for usage.
+
+- ([658902b](https://github.com/angular/protractor/commit/658902bd04bf809bde2751db79e93ae00de2f810)) 
+  feat(plugins): add postTest hook for plugins
+
+  Additionally, add some tests to make sure that plugins can fail properly.
+
+  Closes #1842
+
+- ([13d34c9](https://github.com/angular/protractor/commit/13d34c9192a06634827d89bf356bea33fea75747)) 
+  feat(a11yPlugin): add support for Tenon.io
+
+- ([5f8cffd](https://github.com/angular/protractor/commit/5f8cffd95c50ab4e7949376425f10e13747eb922)) 
+  feat(plugins): allow plugins to export a name for use in reporting
+
+## Bug Fixes
+
+- ([aabdd56](https://github.com/angular/protractor/commit/aabdd567ee62d0d48fad499ee5decbb5d7d6b939)) 
+  fix(debugger): breakpoint isn't set properly for windows
+
+- ([361ae21](https://github.com/angular/protractor/commit/361ae21ee761eb78d1e2c9b2b7d270873a28ef81)) 
+  fix(plugins): add a 'test' or 'fail' string to plugins
+
+  Closes #1843
+
+- ([847e739](https://github.com/angular/protractor/commit/847e73961e52caa1537df269589d9cfe6373b986)) 
+  fix(webdriver-manager): unzipping ie driver should overwrite old version
+
 # 1.7.0
 
 ## Dependency Version Upgrades
@@ -1284,7 +1476,7 @@ _Note: Major version 0 releases are for initial development, and backwards incom
   fix(jasminewd): include full pre-async-call stack trace in expectation failure message
 
 - ([b6df2cf](https://github.com/angular/protractor/commit/b6df2cfcfd35b31e2e473604b6df9add744c6c2d)) 
-  fix(configParser): load coffee and typescript for child processes
+  fix(configParser): load coffee and LiveScript for child processes
 
   Without loading coffee in configParser.js, child processes which try and load a coffeescript
   config file do not have coffee registered with node's required, and child tests fail.

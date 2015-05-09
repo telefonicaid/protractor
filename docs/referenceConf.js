@@ -2,7 +2,10 @@
 //
 // This file shows all of the configuration options that may be passed
 // to Protractor.
-
+//
+// Because this file shows all of the options, if used in practice some
+// will be overridden or ignored. If you're looking for a seed configuration
+// file, see example/conf.js
 
 exports.config = {
   // ---------------------------------------------------------------------------
@@ -51,6 +54,9 @@ exports.config = {
   // The tests will be run remotely using Sauce Labs.
   sauceUser: null,
   sauceKey: null,
+  // Use sauceAgent if you need customize agent for https connection to
+  // saucelabs.com (i.e. your computer behind corporate proxy)
+  sauceAgent: null,
   // Use sauceSeleniumAddress if you need to customize the URL Protractor
   // uses to connect to sauce labs (for example, if you are tunneling selenium
   // traffic through a sauce connect tunnel). Default is
@@ -65,11 +71,6 @@ exports.config = {
   // Path to the firefox application binary. If null, will attempt to find
   // firefox in the default locations.
   firefoxPath: null,
-
-  // **DEPRECATED**
-  // If true, only ChromeDriver will be started, not a Selenium Server.
-  // This should be replaced with directConnect.
-  chromeOnly: false,
 
   // ---------------------------------------------------------------------------
   // ----- What tests to run ---------------------------------------------------
@@ -101,7 +102,7 @@ exports.config = {
   // testing on multiple browsers, use the multiCapabilities array.
 
   // For a list of available capabilities, see
-  // https://code.google.com/p/selenium/wiki/DesiredCapabilities
+  // https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities
   //
   // In addition, you may specify count, shardTestFiles, and maxInstances.
   capabilities: {
@@ -259,10 +260,10 @@ exports.config = {
   // See github.com/angular/protractor/blob/master/lib/frameworks/README.md
   // to comply with the interface details of your custom implementation.
   //
-  // Jasmine is fully supported as a test and assertion framework.
-  // Mocha and Cucumber have limited beta support. You will need to include your
+  // Jasmine and Jasmine2 are fully supported as test and assertion frameworks.
+  // Mocha and Cucumber have limited support. You will need to include your
   // own assertion framework (such as Chai) if working with Mocha.
-  framework: 'jasmine',
+  framework: 'jasmine2',
 
   // Options to be passed to minijasminenode.
   //
