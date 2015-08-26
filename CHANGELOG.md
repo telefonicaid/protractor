@@ -1,3 +1,199 @@
+# 2.2.0
+
+## Breaking Changes
+
+- If you use the plugin API, it has changed a lot.  See
+  [`docs/plugins.md`](docs/plugins.md) for details.  The good news is that it
+  is being taken out of beta, so it should be more stable in the future.
+
+## Dependency Version Upgrades
+
+- ([786ab05](https://github.com/angular/protractor/commit/786ab0541bff9b561b35dbbf0ffc1e9d4a788d10)) 
+  chore(dependencies): update request to 2.57
+
+  Closes #2205
+
+## Features
+
+- ([f2a11a7](https://github.com/angular/protractor/commit/f2a11a7369319edac0f1221a1c6ab0f9a2cc73eb)) 
+  feat(plugins): Changed and expanded the plugin API
+
+  * Changed the plugin API so that it is more uniform (see docs/plugins.md)
+  * Updated existing plugins to the new API
+  * Added the `onPageLoad` and `onPageSync` entry points for plugins for modifying `browser.get`
+  * Added the `waitForPromise` and `waitForCondition` entry points for plugins for modifying
+  `waitForAngular`
+  * Added tests
+
+  This closes #2126 and helps out @andresdominguez
+
+- ([aded26b](https://github.com/angular/protractor/commit/aded26bc9ee6172d6f64361207f6a8b04da09b0d)) 
+  feat(webdriver-manager): update download logic with streaming
+
+  Also adds a content length check to make sure the downloaded binaries are the correct size. This
+  seems to fix up some unreliable download issues that we were previously having.
+
+- ([7aeebd6](https://github.com/angular/protractor/commit/7aeebd6543d89b7d8b9474bc45651b88c5c2d396)) 
+  feat(plugins): reporting loaded plugins
+
+- ([6c10378](https://github.com/angular/protractor/commit/6c10378b9a4e7cae9ba491a63ae11f942c833100)) 
+  feat(protractor): expose pending $http and $timeout on a timeout
+
+  Now when a test times out while waiting for Angular to be stable, pending
+  $timeout and $http tasks will be reported to the console.
+
+## Bug Fixes
+
+- ([c30afdd](https://github.com/angular/protractor/commit/c30afddb80b6138fc5f648f70f2891067d8eeef4)) 
+  fix(test): fixed tests under npm test
+
+- ([3508335](https://github.com/angular/protractor/commit/3508335199fee5dad74c66d9ee19b8bf448c2e62)) 
+  fix(element): ElementArrayFinder.count was slow
+
+  The bug fix for #1903
+  (https://github.com/angular/protractor/commit/2a765c76e121de13ff86a279fe3f21cb15c17783) was
+  causing ElementArrayFinder.prototype.count to be slow because of the extranous checks that must be
+  performed. However, the checks could be delayed into the isPresent check, which will mitigate this
+  issue
+
+  fixes(#2359)
+
+- ([b147033](https://github.com/angular/protractor/commit/b14703319c0d6bb6a69b76d0fd3732e2ea1fbebc)) 
+  fix(by.exactRepeater): should split by "="
+
+  Closes #2335
+
+- ([4c9886b](https://github.com/angular/protractor/commit/4c9886b410ea4d82098af322044a37908a112138)) 
+  fix(Chrome Accessibility Plugin) No error context
+
+  If your tests fail because of StaleElementReferenceError then there is no context about where this
+  is coming from. By having the failure be handled inside of the plugin then grunt can fail
+  gracefully. Additionally, this provides context about where the error originated from.
+
+  Fixes #2331
+
+- ([d15ccdc](https://github.com/angular/protractor/commit/d15ccdcf82bda29c803c3a5642896f16d7e4f938)) 
+  fix(phantomJS): Reset URL cannot be a data url for PhantomJS
+
+  When trying to use the lates version of Angular with PhantomJS we get a message complaining about
+  "Detected a page unload event". This was fixed in earlier versions of Angular, see issue #85, but
+  reappeared now. The problem is that using data urls to reset the page causes this issue, so we
+  have to do as we do with Safari and use "about:blank" instead
+
+- ([e6369ac](https://github.com/angular/protractor/commit/e6369ac973d58a17415ab1211050af26236c6105)) 
+  docs(tutorial): use Jasmine v2 in the tutorial
+
+- ([e60dc0f](https://github.com/angular/protractor/commit/e60dc0ff4fc4a6d22e877d4182605913fae5d5cb)) 
+  fix(browser.refresh): use timeout in milliseconds
+
+  When invoked without arguments browser.refresh used a 10-millisecond timeout, wrongly documented
+  as seconds. It now delegates timeout handling to browser.get, which defaults to 
+  DEFAULT_GET_PAGE_TIMEOUT (10 seconds).
+
+- ([0262268](https://github.com/angular/protractor/commit/0262268fa43b9eefac815d986740efa07bb15818)) 
+  fix(cucumber): fix beforeFeature event handler call guard
+
+  Fixes the run failures reported in https://github.com/cucumber/cucumber-js/issues/342.
+
+# 2.1.0
+
+## Dependency Version Upgrades
+
+- ([25b1fa0](https://github.com/angular/protractor/commit/25b1fa052c195f6f56adcd3f5a116cb5eac238b0)) 
+  feat(jasmine): update jasmine dependency to 2.3.1
+
+  Updated from 2.1.1. See Jasmine's changelog at
+  https://github.com/jasmine/jasmine/tree/master/release_notes
+
+  Closes #1795. Closes #2094. Closes #1768.
+
+- ([25e3b86](https://github.com/angular/protractor/commit/25e3b8611f7333f0829aa3c315a0397891bbada7)) 
+  chore(chromedrivier): Update chromedriver to 2.15
+
+## Features
+
+- ([45341c9](https://github.com/angular/protractor/commit/45341c944bf60537849776c7f362ee0442b219e6)) 
+  feat(explorer): allow element explorer to start as a server
+
+  If element explorer is run with a port (i.e. --debuggerServerPort 1234), it will start up a server
+  that listens to command from the port instead of a repl that listens to process.stdin.
+
+- ([cf9a26f](https://github.com/angular/protractor/commit/cf9a26f1b4bdca7d928794d24738786be074619a)) 
+  feat(plugins): allow plugins.postTest to know what test just ran
+
+- ([0f80696](https://github.com/angular/protractor/commit/0f806964324cbeb4bceb54c5bd82c639b9f99a49)) 
+  feat(plugins): inline plugins
+
+- ([de49969](https://github.com/angular/protractor/commit/de499696eb88721cb073a195025ae48f59cbc905)) 
+  feat(debugger): make element explorer work with node 0.12.0
+
+  Node has changed its debugger significantly in 0.12.0, and these changes are necessary to get it
+  to work now.
+
+  Specifically here are the key points to take note:
+
+  * Before, the process continues running after `process._debugProcess(pid);` is called, but now,
+  the process stops.
+  > To over come this, the call to `process._debugProcess(pid)` is moved from protractor into the
+  debugger client. Secondly, because the process stops after the call, we call `reqContinue` once
+  the debugger connection is established, so that protractor continues into the first break point
+  (for backwards compatibility, we added an extra empty webdriver command so that in earlier 
+  versions of node, protractor doesn't go past the first break point from the reqContinue).
+
+  * Before repl provides '(foobar\n)' when an user inputs 'foobar'. Now it is just 'foobar\n'.
+  > We will parse and strip away both the parenthesis and '\n' to support all versions of node.
+
+  * Additionally (non-related to node 0.12.0), this change makes debugger processes fail fast if the
+  port is taken.
+
+- ([7b96db0](https://github.com/angular/protractor/commit/7b96db0ffb06608b12aa14765133cce42a0cad7f)) 
+  feat(browser.get): Return a promise that handles errors in browser.get
+
+## Bug Fixes
+
+- ([815ff5d](https://github.com/angular/protractor/commit/815ff5d092c8dda88e2a1d4c5c80f66bf20892fa)) 
+  fix(jasmine2): be consistent about passing assertions in output JSON
+
+  See #2051
+
+- ([e6e668c](https://github.com/angular/protractor/commit/e6e668c8d7353c8e797f730b30b996c6a6eb770f)) 
+  chore(jasmine): update jasminewd2 to 0.0.4
+
+  This improves the control flow schedule messages for debugging and fixes an issue with the `this`
+  variable inside tests. See https://github.com/angular/jasminewd/issues/22
+
+- ([e599cf3](https://github.com/angular/protractor/commit/e599cf301d1ff0fe705b2362fa6b4b17859ab8da)) 
+  fix(taskscheduler): label sharded tasks with numbers instead of letters
+
+  Letters run into a problem with a maximum of 26. See #2042
+
+- ([fda3236](https://github.com/angular/protractor/commit/fda323664db65a5c8f1590b9841fcfa53d4ab8fd)) 
+  fix(config): add sauceAgent property to protractor config
+
+  Closes #2040
+
+- ([fa699b8](https://github.com/angular/protractor/commit/fa699b8f1a6b807f2405d6829609797a9a3f8768)) 
+  fix(debugger): fix 'getControlFlowText()' broken in webdriver 2.45
+
+- ([b783dd8](https://github.com/angular/protractor/commit/b783dd865dfd16e5099a863d36d497499026b208)) 
+  fix(browser): remove subsequent duplicate module
+
+  browser.removeMockModule() misses next duplicate module because of iteration over an array it's
+  modifying.
+
+- ([e3d4ad1](https://github.com/angular/protractor/commit/e3d4ad164a04451fce3a57f06121355343c97f48)) 
+  fix(stacktrace): remove jasmine2 specific stacktraces
+
+- ([3cded9b](https://github.com/angular/protractor/commit/3cded9b8da247dc69c78a6fa0e25fe70f6c0f801)) 
+  fix(locators): escape query in byExactBinding
+
+  See http://stackoverflow.com/q/3561711
+
+  Closes #1918
+
+- ([e18d499](https://github.com/angular/protractor/commit/e18d4990878d70f77b29e8678eecbaab7c8cefb5)) 
+  fix(cucumber): process no-snippets param for cucumber framework
+
 # 2.0.0
 
 _Why is this change version 2.0? Protractor is following semver, and there's some breaking changes here._

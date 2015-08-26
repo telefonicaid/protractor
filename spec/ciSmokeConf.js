@@ -14,14 +14,16 @@ exports.config = {
     'basic/synchronize_spec.js'
   ],
 
-  // Two latest versions of Chrome, Firefox, IE, Safari.
+  // Two latest versions of IE, and Safari.
+  // The second latest version of Chrome and Firefox (latest versions are
+  // tested against the full suite in ciFullConf)
   // TODO - add mobile.
   multiCapabilities: [{
     'browserName': 'chrome',
     'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
     'build': process.env.TRAVIS_BUILD_NUMBER,
     'name': 'Protractor smoke tests',
-    'version': '40',
+    'version': '41',
     'selenium-version': '2.45.0',
     'chromedriver-version': '2.14',
     'platform': 'OS X 10.9'
