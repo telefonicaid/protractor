@@ -2,7 +2,6 @@ debugging/
 spec/
 stress/
 selenium/
-debugging/
 testapp/inbrowsertest/
 website/
 
@@ -15,3 +14,5 @@ npm-debug.log
 new.txt
 xmloutput*
 release.md
+.idea
+.DS_Store
