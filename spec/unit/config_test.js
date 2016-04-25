@@ -1,4 +1,4 @@
-var ConfigParser = require('../../lib/configParser');
+var ConfigParser = require('../../built/configParser').default;
 var path = require('path');
 
 describe('the config parser', function() {
@@ -49,9 +49,9 @@ describe('the config parser', function() {
         }
       };
 
-      var specs = new ConfigParser.getSpecs(config);
+      var specs = ConfigParser.getSpecs(config);
 
-      expect(specs).toEqual(['bar.spec.js', 'foo.spec.js']);
+      expect(specs).toEqual(['foo.spec.js', 'bar.spec.js']);
     });
   });
 

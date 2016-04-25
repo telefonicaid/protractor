@@ -1,6 +1,68 @@
+# 3.2.2
+_This release is a hotfix for webdriver-manager iedriver_
+
+## Bug Fix
+- ([c6a3b5e](https://github.com/angular/protractor/commit/c6a3b5eab09d95f9d2170e4aface5559cd6b0132))
+  fix(webdriver) - fix file type for internet explorer driver file
+
+- ([d3bd170](https://github.com/angular/protractor/commit/d3bd1702040cde5b9d0a3c1578d0d8e16597224c))
+  fix(bootstrap): enable debug info before setting defer label
+
+  Note that in most cases, this should not have surfaced as an issue because the base test mock
+  modules will also try to turn on debug info.
+
+  Closes #3009
+  
+# 3.2.1
+_This release is a hotfix for modules that require protractor_
+
+## Bug Fix
+- ([6e02934](https://github.com/angular/protractor/commit/6e029341a67cd985bf727285dec2ef10aafe7b6a))
+  fix(package): Update module main in package.json to use built.
+
+# 3.2.0
+
+## Features
+- ([cae175c](https://github.com/angular/protractor/commit/cae175cbe632828172e9a7065aacfe67dd51d8dd))
+  feat(plugins) Calculate skipAngularStability dynamically.
+
+  This allows plugins to turn Protractor's default synchronization on and off as needed.
+
+- ([7372267](https://github.com/angular/protractor/commit/7372267f23cc8586409f9ef914ab801c78992ccd))
+  feat(webdriver): add support for custom versions for selenium, chrome driver, and ie driver
+
+- ([1cbbe4f](https://github.com/angular/protractor/commit/1cbbe4fef5c5f2bc0923fd54c53afad71a44af6c))
+  feat(config): no globals option
+
+- ([9608201](https://github.com/angular/protractor/commit/960820120cf7df08cff8cfe15a5a9f08612c9773))
+  feat(typescript): adding typescript to protractor
+
+  Converting a 3 files over to typescript.
+
+  Adding an `npm prepublish` step that will use gulp to download the typings, transpile the files
+  with tscto the built/ directory and copy the rest of the javascript files from lib/ to the built/
+  folder.
+
+  Also adding scripts to package.json for `npm run tsc` and `npm run tsc:w` for transpiling help.
+
+- ([a4a7209](https://github.com/angular/protractor/commit/a4a72095d2f95227f1ba293ae047beab28eb761d)) 
+  feat(plugins): skipAngularStability
+
+## Dependency Upgrades
+- ([29627f4](https://github.com/angular/protractor/commit/29627f42bb7404f66e3a76ba3cbd85256b408fb6))
+  chore(selenium) - upgrade to selenium webdriver v 2.52.0
+
+  See the full changelog at https://github.com/SeleniumHQ/selenium/blob/master/javascript/node/selenium-webdriver/CHANGES.md#v2520
+
+## Bug Fixes
+- ([a2c7a4b](https://github.com/angular/protractor/commit/a2c7a4bf1fb2a3a509040ae8ec7737cc002b764e)) 
+  fix(config): Do not sort spec keys
+
+  Fixes #2928
+
 # 3.1.1
 
-# Bug Fixes
+## Bug Fixes
 
 - ([4db52f2](https://github.com/angular/protractor/commit/4db52f2a21171ebbc6fed0ca3df760553afc264a)) 
   test(config): add test for config files using only per-capability specs
@@ -19,7 +81,7 @@
 
   Selenium-standalone update to 2.51.0. Update chromedriver to 2.21.
 
-  Chromedriver changelog: http://chromedriver.storage.googleapis.com/2.20/notes.txt Selenium
+  Chromedriver changelog: http://chromedriver.storage.googleapis.com/2.21/notes.txt Selenium
   changelog: https://github.com/SeleniumHQ/selenium/blob/master/dotnet/CHANGELOG
 
 - ([5930d14](https://github.com/angular/protractor/commit/5930d1444aef2f053c132eb437d07f9b000d7803)) 
